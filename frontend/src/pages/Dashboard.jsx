@@ -186,38 +186,43 @@ const Dashboard = () => {
           </div>
 
           {activeTab === 'leads' && (
-            <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
-              <div className="flex items-center gap-1.5 text-slate-400 mr-1 shrink-0">
-                <Filter size={14} />
-                <span className="text-[10px] font-black uppercase tracking-widest">Filter</span>
+            <div className="flex flex-col md:flex-row md:items-center gap-3 w-full md:w-auto">
+              {/* Select Filters Group */}
+              <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-hide">
+                <div className="flex items-center gap-1.5 text-slate-400 mr-1 shrink-0">
+                  <Filter size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Filter</span>
+                </div>
+                <select 
+                  name="status" 
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 min-w-[110px] shadow-sm" 
+                  value={filters.status} 
+                  onChange={handleFilterChange}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="abandoned">Abandoned</option>
+                  <option value="success">Success</option>
+                  <option value="failed">Failed</option>
+                </select>
+                <select 
+                  name="source" 
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 min-w-[110px] shadow-sm" 
+                  value={filters.source} 
+                  onChange={handleFilterChange}
+                >
+                  <option value="">All Sources</option>
+                  <option value="shopify">Shopify</option>
+                  <option value="gokwik">GoKwik</option>
+                </select>
               </div>
-              <select 
-                name="status" 
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 min-w-[120px] shadow-sm" 
-                value={filters.status} 
-                onChange={handleFilterChange}
-              >
-                <option value="">All Statuses</option>
-                <option value="abandoned">Abandoned</option>
-                <option value="success">Success</option>
-                <option value="failed">Failed</option>
-              </select>
-              <select 
-                name="source" 
-                className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 min-w-[120px] shadow-sm" 
-                value={filters.source} 
-                onChange={handleFilterChange}
-              >
-                <option value="">All Sources</option>
-                <option value="shopify">Shopify</option>
-                <option value="gokwik">GoKwik</option>
-              </select>
 
-              <div className="flex items-center gap-2 shrink-0">
+              {/* Date Filters Group */}
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <div className="hidden md:block w-px h-4 bg-slate-200 mx-1" /> {/* Divider on desktop */}
                 <input 
                   type="date" 
                   name="startDate"
-                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
+                  className="flex-1 md:flex-none px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
                   value={filters.startDate}
                   onChange={handleFilterChange}
                   title="Start Date"
@@ -226,7 +231,7 @@ const Dashboard = () => {
                 <input 
                   type="date" 
                   name="endDate"
-                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
+                  className="flex-1 md:flex-none px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
                   value={filters.endDate}
                   onChange={handleFilterChange}
                   title="End Date"
