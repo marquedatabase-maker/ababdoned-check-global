@@ -3,14 +3,26 @@ import Lead from '../models/Lead.js';
 export const getAnalytics = async (req, res) => {
   try {
     const store_id = req.user.store_id;
-    console.log(`Fetching analytics for store_id: ${store_id}`);
+    const { startDate, endDate } = req.query;
+    console.log(`Fetching analytics for store_id: ${store_id} with dates: ${startDate} - ${endDate}`);
 
-    const totalLeads = await Lead.countDocuments({ store_id });
-    const abandonedCount = await Lead.countDocuments({ store_id, status: 'abandoned' });
-    const convertedCount = await Lead.countDocuments({ store_id, status: 'success' });
+    const query = { store_id };
+    if (startDate || endDate) {
+      query.created_at = {};
+      if (startDate) query.created_at.$gte = new Date(startDate);
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.created_at.$lte = end;
+      }
+    }
+
+    const totalLeads = await Lead.countDocuments(query);
+    const abandonedCount = await Lead.countDocuments({ ...query, status: 'abandoned' });
+    const convertedCount = await Lead.countDocuments({ ...query, status: 'success' });
     
     const stats = await Lead.aggregate([
-      { $match: { store_id } },
+      { $match: query },
       {
         $group: {
           _id: null,

@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [pagination, setPagination] = useState({ total: 0, pages: 1, currentPage: 1, limit: 30 });
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({ status: '', source: '' });
+  const [filters, setFilters] = useState({ status: '', source: '', startDate: '', endDate: '' });
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState('leads');
   const [copied, setCopied] = useState(false);
@@ -29,7 +29,7 @@ const Dashboard = () => {
     try {
       const [leadsRes, analyticsRes] = await Promise.all([
         api.get('/leads', { params: { ...filters, page, limit: 30 } }),
-        api.get('/analytics')
+        api.get('/analytics', { params: { startDate: filters.startDate, endDate: filters.endDate } })
       ]);
       setLeads(leadsRes.data.leads || []);
       setPagination(leadsRes.data.pagination || { total: 0, pages: 1, currentPage: 1, limit: 30 });
@@ -212,6 +212,26 @@ const Dashboard = () => {
                 <option value="shopify">Shopify</option>
                 <option value="gokwik">GoKwik</option>
               </select>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <input 
+                  type="date" 
+                  name="startDate"
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
+                  value={filters.startDate}
+                  onChange={handleFilterChange}
+                  title="Start Date"
+                />
+                <span className="text-slate-400 text-[10px] font-bold">to</span>
+                <input 
+                  type="date" 
+                  name="endDate"
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 shadow-sm"
+                  value={filters.endDate}
+                  onChange={handleFilterChange}
+                  title="End Date"
+                />
+              </div>
             </div>
           )}
         </div>
