@@ -5,8 +5,7 @@ import Navbar from '../components/Navbar';
 import StatsCard from '../components/StatsCard';
 import LeadsTable from '../components/LeadsTable';
 import * as XLSX from 'xlsx';
-import { Users, ShoppingBag, CheckCircle, AlertCircle, Filter, RefreshCw, BookOpen, List, Code, Copy, Check, Info, ChevronLeft, ChevronRight, Download, FileSpreadsheet } from 'lucide-react';
-
+import { Users, ShoppingBag, CheckCircle, AlertCircle, Filter, RefreshCw, BookOpen, List, Code, Copy, Check, Info, ChevronLeft, ChevronRight, Download, FileSpreadsheet, MessageSquare } from 'lucide-react';
 const Dashboard = () => {
   const { user } = useAuth();
   const [leads, setLeads] = useState([]);
@@ -176,6 +175,7 @@ const Dashboard = () => {
               <List size={16} />
               Leads
             </button>
+
             <button 
               onClick={() => setActiveTab('docs')}
               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-all ${activeTab === 'docs' ? 'bg-white text-primary-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
@@ -243,7 +243,7 @@ const Dashboard = () => {
 
         {activeTab === 'leads' ? (
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-3">
-            <LeadsTable leads={leads} loading={loading} />
+            <LeadsTable leads={leads} loading={loading} pagination={pagination} />
             
             {/* Pagination Controls */}
             {pagination.pages > 1 && (

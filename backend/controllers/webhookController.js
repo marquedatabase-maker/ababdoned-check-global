@@ -1,6 +1,5 @@
 import Lead from '../models/Lead.js';
 import User from '../models/User.js';
-
 export const handleWebhook = async (req, res) => {
   try {
     const data = req.body;
@@ -65,17 +64,32 @@ export const handleWebhook = async (req, res) => {
       };
     }
 
-    if (!normalizedData.phone) {
-      console.log(`[Webhook] IGNORED: Lead "${normalizedData.name}" has no phone number.`);
-      return res.status(200).json({ message: 'Lead ignored: No phone' });
+    // IGNORE INCOMPLETE CHECKOUTS
+    // Hum tabhi data capture karenge jab kam se kam Phone aur Address mil jaye 
+    // (Jiska matlab hai user 'Pay Now' tak pahunch gaya hai)
+    if (!normalizedData.phone || normalizedData.address === 'No Address Provided') {
+      console.log(`[Webhook] IGNORED: Incomplete lead "${normalizedData.name}". Waiting for final steps.`);
+      return res.status(200).json({ message: 'Lead ignored: Incomplete details' });
     }
 
     const existingLead = await Lead.findOne({ external_id: normalizedData.external_id });
+    
+
+
     if (existingLead) {
+      // Update ALL fields with latest data
+      existingLead.name = normalizedData.name;
+      existingLead.phone = normalizedData.phone;
+      existingLead.email = normalizedData.email;
+      existingLead.address = normalizedData.address;
+      existingLead.amount = normalizedData.amount;
       existingLead.status = normalizedData.status;
       existingLead.items = normalizedData.items;
       existingLead.recovery_url = normalizedData.recovery_url;
+      
       await existingLead.save();
+      console.log(`[Webhook] UPDATED: Lead "${normalizedData.name}" updated.`);
+      
       return res.status(200).json({ message: 'Lead updated' });
     }
 
@@ -88,7 +102,8 @@ export const handleWebhook = async (req, res) => {
     });
 
     await newLead.save();
-    console.log(`[Webhook] SUCCESS: Lead saved with recovery URL for ${user.store_name}`);
+    console.log(`[Webhook] SUCCESS: Lead saved for ${user.store_name}`);
+
     res.status(201).json({ message: 'Webhook processed successfully' });
   } catch (error) {
     console.error('[Webhook] FATAL ERROR:', error);
